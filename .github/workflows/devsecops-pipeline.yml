@@ -7,6 +7,12 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+env:
+  # SonarCloud configuration
+  SONAR_PROJECT_KEY: Tushant-Thakur_devsecops-pipline-project
+  SONAR_ORG: Tushant-Thakur
+  SONAR_HOST: https://sonarcloud.io
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,23 +20,52 @@ jobs:
     steps:
       # Step 1: Checkout code
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for Sonar analysis
 
-      # Step 2: Set up JDK 22 (Use Temurin instead of Oracle JDK directly)
+      # Step 2: Set up JDK 22 (Temurin)
       - name: Set up JDK 22 (Temurin)
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '22'
-          distribution: 'temurin'  # Using Temurin (AdoptOpenJDK)
-      
-      # Step 3: Build with Maven
+          distribution: 'temurin'
+
+      # Step 3: Cache Maven packages
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      # Step 4: Build with Maven
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
-      # Step 4: SonarCloud Scan (adjust the project and organization name)
+      # ====== SNYK STEPS WILL GO HERE LATER ======
+      # - name: Set up Snyk
+      #   uses: snyk/actions/setup@v2
+      #   with:
+      #     version: '1.1040.0'
+      #
+      # - name: Run Snyk Test
+      #   run: snyk test
+      #   env:
+      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      # ===========================================
+
+      # Step 5: Run SonarCloud analysis
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2  # Using v2 instead of v1
+        uses: SonarSource/sonarcloud-github-action@v2
         with:
           entryPoint: mvn sonar:sonar
-          projectBaseDir: .  # Use the root directory of your project
+          projectBaseDir: .
+          args: >
+            -Dsonar.organization=${{ env.SONAR_ORG }}
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+            -Dsonar.host.url=${{ env.SONAR_HOST }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+
 
