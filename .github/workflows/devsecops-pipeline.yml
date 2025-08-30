@@ -31,5 +31,6 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         with:
-          organization: devsecops-team  # Replace with your SonarCloud organization
+          organization: Tushant-Thakur # Replace with your SonarCloud organization
           token: ${{ secrets.SONAR_TOKEN }}  # Optional, only if not using GitHub login
+
