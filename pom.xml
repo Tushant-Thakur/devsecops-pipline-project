@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>devsecops-pipline-project</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>devsecops-pipline-project</name>
+    <url>http://maven.apache.org</url>
+
+    <!-- SonarCloud Configuration -->
+    <properties>
+        <sonar.organization>devsecops-team</sonar.organization> <!-- Replace with your SonarCloud organization -->
+        <sonar.projectKey>Tushant-Thakur_devsecops-pipline-project</sonar.projectKey> <!-- Replace with your project key -->
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    </properties>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <!-- Add any required dependencies for your project here -->
+    </dependencies>
+
+    <!-- Build Configuration -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <!-- SonarQube Maven Plugin -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.9.1.2184</version>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
