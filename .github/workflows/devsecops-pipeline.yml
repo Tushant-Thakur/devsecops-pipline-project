@@ -1,4 +1,4 @@
-﻿name: DevSecOps Pipeline
+name: DevSecOps Pipeline
 
 on:
   push:
@@ -9,28 +9,27 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # or windows-latest if you're using Windows
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Set up JDK (required for Maven)
-      - name: Set up JDK 11
+      # Step 2: Set up JDK 22 (Use Temurin instead of Oracle JDK directly)
+      - name: Set up JDK 22 (Temurin)
         uses: actions/setup-java@v2
         with:
-          java-version: '11'  # Specify your desired Java version
-          distribution: 'adoptopenjdk'  # Choose the distribution, e.g., AdoptOpenJDK, OpenJDK
-
-      # Step 3: Build the project with Maven
+          java-version: '22'
+          distribution: 'temurin'  # Using Temurin (AdoptOpenJDK)
+      
+      # Step 3: Build with Maven
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
-      # Step 4: SonarCloud Scan (after the Maven build)
+      # Step 4: SonarCloud Scan (adjust the project and organization name)
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         with:
-          organization: devsecops-team  # Replace with your actual SonarCloud organization
-          token: ${{ secrets.SONAR_TOKEN }}  # If you're using GitHub token, you can leave this out.
-
+          organization: devsecops-team  # Replace with your SonarCloud organization
+          token: ${{ secrets.SONAR_TOKEN }}  # Optional, only if not using GitHub login
