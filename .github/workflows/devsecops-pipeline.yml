@@ -1,71 +1,40 @@
 name: DevSecOps Pipeline
-
 on:
   push:
     branches:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
-
-env:
-  # SonarCloud configuration
-  SONAR_PROJECT_KEY: Tushant-Thakur_devsecops-pipline-project
-  SONAR_ORG: Tushant-Thakur
-  SONAR_HOST: https://sonarcloud.io
-
 jobs:
   build:
+    name: Build and analyze
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required for Sonar analysis
-
-      # Step 2: Set up JDK 22 (Temurin)
-      - name: Set up JDK 22 (Temurin)
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 22
         uses: actions/setup-java@v4
         with:
-          java-version: '22'
-          distribution: 'temurin'
-
-      # Step 3: Cache Maven packages
+          java-version: 22
+          distribution: 'temurin' # Alternative distribution options are available.
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project
 
-      # Step 4: Build with Maven
-      - name: Build with Maven
-        run: mvn clean install -DskipTests
-
-      # ====== SNYK STEPS WILL GO HERE LATER ======
-      # - name: Set up Snyk
-      #   uses: snyk/actions/setup@v2
-      #   with:
-      #     version: '1.1040.0'
-      #
-      # - name: Run Snyk Test
-      #   run: snyk test
-      #   env:
-      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      # ===========================================
-
-      # Step 5: Run SonarCloud analysis
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          entryPoint: mvn sonar:sonar
-          projectBaseDir: .
-          args: >
-            -Dsonar.organization=${{ env.SONAR_ORG }}
-            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
-            -Dsonar.host.url=${{ env.SONAR_HOST }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
 
 
