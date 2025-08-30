@@ -29,8 +29,8 @@ jobs:
 
       # Step 4: SonarCloud Scan (adjust the project and organization name)
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v1
+        uses: SonarSource/sonarcloud-github-action@v2  # Using v2 instead of v1
         with:
-          organization: Tushant-Thakur # Replace with your SonarCloud organization
-          token: ${{ secrets.SONAR_TOKEN }}  # Optional, only if not using GitHub login
+          entryPoint: mvn sonar:sonar
+          projectBaseDir: .  # Use the root directory of your project
 
