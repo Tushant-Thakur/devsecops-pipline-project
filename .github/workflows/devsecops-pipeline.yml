@@ -56,7 +56,7 @@ jobs:
       - name: Run Snyk to check for vulnerabilities
         run: snyk test --severity-threshold=high
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }         
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}         
                   
 
           # Step 8: Build and analyze with SonarCloud
@@ -64,6 +64,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project
+
 
 
 
