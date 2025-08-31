@@ -15,46 +15,48 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
           
-       # Step 2: Set up JDK 17 (or change to 22 if needed)
+       # Step 2: Set up JDK 22 (or change to 22 if needed)
       - name: Set up JDK 22
         uses: actions/setup-java@v4
         with:
           java-version: 22
           distribution: 'temurin' # Alternative distribution options are available.
-
-              # Step 2.5: Ensure JAVA_HOME is set (fallback)
+          
+      # Step 3: Ensure JAVA_HOME is exported (safety)
       - name: Export JAVA_HOME
-        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV          
 
 
-        # Step 3: Cache SonarQube packages
+        # Step 4: Cache SonarQube packages
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-        # Step 4: Cache Maven packages
+        # Step 5: Cache Maven packages
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      # Step 5: Snyk Scan (Vulnerability & License check)
+      # Step 6: Install Snyk CLI
+      - name: Set up Snyk CLI
+        uses: snyk/actions/setup@master
+
+      # Step 7: Run Snyk test (works with Maven project)
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven@master
+        run: snyk test --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high
-          # You can change severity to medium/low depending on needs
 
-          # Step 6: Build and analyze with SonarCloud
+          # Step 8: Build and analyze with SonarCloud
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project
+
 
 
 
