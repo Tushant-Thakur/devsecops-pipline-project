@@ -63,16 +63,14 @@ jobs:
       # Step 9: Build and analyze with SonarCloud
       - name: Build and analyze
         env:
-           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn clean verify sonar:sonar \
-                -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project \
-                -Dsonar.organization=devsecops-team \
-                -Dsonar.host.url=https://sonarcloud.io
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project
 
 
 
 
   
+
 
 
 
