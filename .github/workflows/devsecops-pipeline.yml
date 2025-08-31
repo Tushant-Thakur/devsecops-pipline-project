@@ -38,7 +38,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       # Step 5: Snyk Scan (Vulnerability & License check)
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven@v3
+        uses: snyk/actions/maven@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -50,6 +50,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project
+
 
 
 
