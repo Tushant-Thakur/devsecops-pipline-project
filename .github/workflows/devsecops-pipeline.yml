@@ -41,22 +41,22 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      # # Step 6: Install Snyk CLI
-      # - name: Set up Snyk CLI
-      #   uses: snyk/actions/setup@master
+      # Step 6: Install Snyk CLI
+      - name: Set up Snyk CLI
+        uses: snyk/actions/setup@master
 
 
-      #   # Step 5.5: Monitor project in Snyk (optional but recommended)
-      # - name: Monitor project in Snyk
-      #   run: snyk monitor --severity-threshold=high
-      #   env:
-      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }} 
+        # Step 5.5: Monitor project in Snyk (optional but recommended)
+      - name: Monitor project in Snyk
+        run: snyk monitor --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }} 
 
-      # # Step 7: Run Snyk test (works with Maven project)
-      # - name: Run Snyk to check for vulnerabilities
-      #   run: snyk test --severity-threshold=high
-      #   env:
-      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}         
+      # Step 7: Run Snyk test (works with Maven project)
+      - name: Run Snyk to check for vulnerabilities
+        run: snyk test --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}         
                   
 
           # Step 8: Build and analyze with SonarCloud
@@ -64,6 +64,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project
+
 
 
 
