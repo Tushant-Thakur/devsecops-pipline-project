@@ -51,11 +51,19 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
+      # Step 5.5: Monitor project in Snyk (optional but recommended)
+      - name: Monitor project in Snyk
+        run: snyk monitor --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}          
+                  
+
           # Step 8: Build and analyze with SonarCloud
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project
+
 
 
 
