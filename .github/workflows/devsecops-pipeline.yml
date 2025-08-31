@@ -22,6 +22,11 @@ jobs:
           java-version: 22
           distribution: 'temurin' # Alternative distribution options are available.
 
+              # Step 2.5: Ensure JAVA_HOME is set (fallback)
+      - name: Export JAVA_HOME
+        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+
+
         # Step 3: Cache SonarQube packages
       - name: Cache SonarQube packages
         uses: actions/cache@v4
@@ -50,6 +55,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project
+
 
 
 
