@@ -22,48 +22,59 @@ jobs:
           java-version: 22
           distribution: 'temurin' # Alternative distribution options are available.
           
-      # Step 3: Ensure JAVA_HOME is exported (safety)
+     # Step 3: Ensure JAVA_HOME is exported (safety)
       - name: Export JAVA_HOME
         run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV          
 
 
-        # Step 4: Cache SonarQube packages
+      # Step 4: Cache SonarQube packages
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-        # Step 5: Cache Maven packages
+      # Step 5: Cache Maven packages
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+          
       # Step 6: Install Snyk CLI
       - name: Set up Snyk CLI
         uses: snyk/actions/setup@master
 
 
-        # Step 5.5: Monitor project in Snyk (optional but recommended)
+      # Step 7: Monitor project in Snyk (optional but recommended)
       - name: Monitor project in Snyk
         run: snyk monitor --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }} 
 
-      # Step 7: Run Snyk test (works with Maven project)
+      # Step 8: Run Snyk test (works with Maven project)
       - name: Run Snyk to check for vulnerabilities
         run: snyk test --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}         
                   
 
-          # Step 8: Build and analyze with SonarCloud
+      # Step 9: Build and analyze with SonarCloud
       - name: Build and analyze
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project
+           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn clean verify sonar:sonar \
+                -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project \
+                -Dsonar.organization=devsecops-team \
+                -Dsonar.host.url=https://sonarcloud.io
+
+
+
+
+  
+
+
 
 
 
