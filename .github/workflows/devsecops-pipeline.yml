@@ -1,75 +1,79 @@
 name: DevSecOps Pipeline
+
 on:
   push:
     branches:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   build:
-    name: Build and analyze
+    name: Build, Test, Snyk Scan & SonarCloud Analysis
     runs-on: ubuntu-latest
+
     steps:
-       # Step 1: Checkout code
-      - uses: actions/checkout@v4
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-          
-       # Step 2: Set up JDK 22 (or change to 22 if needed)
-      - name: Set up JDK 22
+          fetch-depth: 0  # Required for better SonarCloud analysis context
+
+      # Step 2: Set up JDK (matches pom.xml Java version)
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: 22
-          distribution: 'temurin' # Alternative distribution options are available.
-          
-     # Step 3: Ensure JAVA_HOME is exported (safety)
-      - name: Export JAVA_HOME
-        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV          
+          java-version: 17
+          distribution: 'temurin'
 
-
-      # Step 4: Cache SonarQube packages
+      # Step 3: Cache SonarQube packages
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      # Step 5: Cache Maven packages
+
+      # Step 4: Cache Maven dependencies
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-          
-      # Step 6: Install Snyk CLI
+
+      # Step 5: Install dependencies and run tests
+      - name: Build and test with Maven
+        run: mvn -B clean verify
+
+      # Step 6: Set up Snyk CLI
       - name: Set up Snyk CLI
         uses: snyk/actions/setup@master
 
+      # Step 7: Run Snyk security test
+      - name: Run Snyk vulnerability scan
+        run: snyk test --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      # Step 7: Monitor project in Snyk (optional but recommended)
+      # Step 8: Monitor Snyk project (optional but recommended)
       - name: Monitor project in Snyk
         run: snyk monitor --severity-threshold=high
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }} 
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      # Step 8: Run Snyk test (works with Maven project)
-      - name: Run Snyk to check for vulnerabilities
-        run: snyk test --severity-threshold=high
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}         
-                  
-
-      # Step 9: Build and analyze with SonarCloud
-      - name: Build and analyze
+      # Step 9: Run SonarCloud code analysis
+      - name: Analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project
-
-
-
+        run: |
+          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.2.0.4988:sonar \
+            -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project \
+            -Dsonar.organization=devsecops-team \
+            -Dsonar.host.url=https://sonarcloud.io
 
   
+
 
 
 
