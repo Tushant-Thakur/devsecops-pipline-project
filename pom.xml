@@ -11,25 +11,30 @@
     <name>Calculator App</name>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.source>17</maven.compiler.source> <!-- Change to 22 if you want -->
         <maven.compiler.target>17</maven.compiler.target>
-
-        <!-- SonarCloud Configuration -->
-        <sonar.organization>tushant-thakur</sonar.organization>
+        <sonar.organization>devsecops-team</sonar.organization> <!-- Your SonarCloud org -->
         <sonar.projectKey>Tushant-Thakur_devsecops-pipline-project</sonar.projectKey>
-        <sonar.projectName>DevSecOps Pipeline Java Calculator</sonar.projectName>
     </properties>
 
     <dependencies>
-        <!-- ✅ JUnit 5 (API + Engine) -->
+        <!-- JUnit 5 API -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.10.2</version>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- ⚠️ Vulnerable dependency for Snyk demo -->
+        <!-- JUnit 5 Engine -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Vulnerable dependency for Snyk demo -->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
@@ -39,22 +44,22 @@
 
     <build>
         <plugins>
-            <!-- Compiler Plugin -->
+            <!-- Compiler plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <source>17</source> <!-- Change to 22 if needed -->
+                    <target>17</target>
                 </configuration>
             </plugin>
 
-            <!-- Surefire Plugin for running JUnit 5 tests -->
+            <!-- Surefire plugin for running JUnit 5 tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>3.1.2</version>
                 <configuration>
                     <useModulePath>false</useModulePath>
                 </configuration>
