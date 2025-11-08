@@ -87,6 +87,20 @@ jobs:
 
 
 
+      # Step X: Commit dashboard JSON back to repo
+      - name: Commit dashboard JSON
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add dashboard/data.json
+          git commit -m "Update dashboard JSON"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+
 
 
 
