@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DevSecOps Pipeline Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #2c3e50; }
+        .badge { margin: 10px 0; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>DevSecOps Pipeline Project</h1>
+
+    <h2>Build & Test Status</h2>
+    <div class="badge">
+        <img src="https://github.com/Tushant-Thakur/devsecops-pipeline-project/actions/workflows/devsecops-pipeline.yml/badge.svg" alt="Build Status">
+    </div>
+
+    <h2>Snyk Vulnerabilities</h2>
+    <div class="badge">
+        <a href="https://snyk.io/test/github/Tushant-Thakur/devsecops-pipeline-project">
+            <img src="https://snyk.io/test/github/Tushant-Thakur/devsecops-pipeline-project/badge.svg" alt="Snyk Status">
+        </a>
+    </div>
+
+    <h2>SonarQube Quality Gate</h2>
+    <div class="badge">
+        <a href="https://sonarcloud.io/summary/new_code?id=Tushant-Thakur_devsecops-pipline-project">
+            <img src="https://sonarcloud.io/api/project_badges/measure?project=Tushant-Thakur_devsecops-pipline-project&metric=alert_status" alt="SonarQube Quality Gate">
+        </a>
+    </div>
+
+    <h2>Reports & Logs</h2>
+    <ul>
+        <li><a href="https://github.com/Tushant-Thakur/devsecops-pipeline-project/actions">GitHub Actions Logs</a></li>
+        <li><a href="https://sonarcloud.io/summary/new_code?id=Tushant-Thakur_devsecops-pipline-project">SonarQube Dashboard</a></li>
+        <li><a href="https://app.snyk.io/org/tannishkk/projects">Snyk Dashboard</a></li>
+    </ul>
+</body>
+</html>
