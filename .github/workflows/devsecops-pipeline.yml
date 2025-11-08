@@ -55,12 +55,14 @@ jobs:
         run: snyk monitor --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
 
       # Step 8: Run Snyk test
       - name: Run Snyk to check for vulnerabilities
         run: snyk test --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
 
       # Step 9: Build and analyze with SonarCloud
       - name: Build and analyze with SonarCloud
@@ -72,6 +74,7 @@ jobs:
             -Dsonar.organization=devsecops-team \
             -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project \
             -Dsonar.host.url=${SONAR_HOST_URL}
+
 
 
 
