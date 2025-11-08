@@ -102,12 +102,12 @@ jobs:
           SONAR_DUPLICATIONS=0
 
           cat <<EOF > dashboard/data.json
-{
-  "build": {"success": $BUILD_SUCCESS, "failed": $BUILD_FAILED},
-  "snyk": {"critical": $SNYK_CRITICAL, "high": $SNYK_HIGH, "medium": $SNYK_MEDIUM, "low": $SNYK_LOW},
-  "sonar": {"codeSmells": $SONAR_CODE_SMELLS, "coverage": $SONAR_COVERAGE, "bugs": $SONAR_BUGS, "vulnerabilities": $SONAR_VULNERABILITIES, "duplications": $SONAR_DUPLICATIONS}
-}
-EOF
+          {
+            "build": {"success": $BUILD_SUCCESS, "failed": $BUILD_FAILED},
+            "snyk": {"critical": $SNYK_CRITICAL, "high": $SNYK_HIGH, "medium": $SNYK_MEDIUM, "low": $SNYK_LOW},
+            "sonar": {"codeSmells": $SONAR_CODE_SMELLS, "coverage": $SONAR_COVERAGE, "bugs": $SONAR_BUGS, "vulnerabilities": $SONAR_VULNERABILITIES, "duplications": $SONAR_DUPLICATIONS}
+          }
+          EOF
 
       # Step 11: Commit dashboard JSON back to repo
       - name: Commit dashboard JSON
@@ -117,7 +117,6 @@ EOF
           git add dashboard/data.json
           git commit -m "Update dashboard JSON" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
-
 
 
 
