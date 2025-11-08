@@ -1,49 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>DevSecOps Pipeline Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        h1 { color: #2c3e50; }
-        .badge { margin: 10px 0; }
-        ul { list-style-type: none; padding: 0; }
-        li { margin: 5px 0; }
-    </style>
+<meta charset="UTF-8">
+<title>DevSecOps Interactive Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #1f1f2e;
+        color: #f0f0f0;
+        margin: 0; padding: 0;
+    }
+    header {
+        background: #34495e;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    main {
+        max-width: 1200px;
+        margin: 30px auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        padding: 0 20px;
+    }
+    .card {
+        background: #2c3e50;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+    h2 { margin-top: 0; color: #1abc9c; }
+    canvas { margin-top: 15px; }
+    a { color: #3498db; text-decoration: none; }
+    a:hover { color: #1abc9c; }
+</style>
 </head>
 <body>
-    <h1>DevSecOps Pipeline Project</h1>
 
-    <h2>Build & Test Status</h2>
-    <div class="badge">
-        <a href="https://github.com/Tushant-Thakur/devsecops-pipline-project/actions">
-            <img src="https://img.shields.io/github/actions/workflow/status/Tushant-Thakur/devsecops-pipeline-project/devsecops-pipeline.yml?branch=main" alt="Build Status">
+<header>
+    <h1>DevSecOps Interactive Dashboard</h1>
+    <p>All metrics & logs in one interactive view</p>
+</header>
+
+<main>
+
+    <!-- Build Status Card -->
+    <div class="card">
+        <h2>Build & Test Status</h2>
+        <a href="https://github.com/Tushant-Thakur/devsecops-pipline-project/actions/workflows/devsecops-pipeline.yml">
+            <img src="https://github.com/Tushant-Thakur/devsecops-pipline-project/actions/workflows/devsecops-pipeline.yml/badge.svg?branch=main" alt="Build Status">
+
         </a>
+        <canvas id="buildChart" width="300" height="200"></canvas>
     </div>
 
-
-
-    <h2>Snyk Vulnerabilities</h2>
-    <div class="badge">
-        <a href="https://snyk.io/test/github/Tushant-Thakur/devsecops-pipeline-project">
+    <!-- Snyk Vulnerabilities Card -->
+    <div class="card">
+        <h2>Snyk Vulnerabilities</h2>
+        <a href="https://app.snyk.io/org/tannishkk/projects">
             <img src="https://snyk.io/test/github/Tushant-Thakur/devsecops-pipeline-project/badge.svg" alt="Snyk Status">
         </a>
+        <canvas id="vulnChart" width="300" height="200"></canvas>
     </div>
 
-    <h2>SonarQube Quality Gate</h2>
-    <div class="badge">
+    <!-- SonarCloud Quality Gate Card -->
+    <div class="card">
+        <h2>SonarCloud Quality Gate</h2>
         <a href="https://sonarcloud.io/summary/new_code?id=Tushant-Thakur_devsecops-pipline-project">
             <img src="https://sonarcloud.io/api/project_badges/measure?project=Tushant-Thakur_devsecops-pipline-project&metric=alert_status" alt="SonarQube Quality Gate">
         </a>
+        <canvas id="qualityChart" width="300" height="200"></canvas>
     </div>
 
-    <h2>Reports & Logs</h2>
-    <ul>
-        <li><a href="https://github.com/Tushant-Thakur/devsecops-pipline-project/actions">GitHub Actions Logs</a></li>
-        <li><a href="https://sonarcloud.io/summary/new_code?id=Tushant-Thakur_devsecops-pipline-project">SonarQube Dashboard</a></li>
-        <li><a href="https://app.snyk.io/org/tannishkk/projects">Snyk Dashboard</a></li>
-    </ul>
+</main>
+
+<script>
+    // Sample Data (you can replace dynamically)
+    const buildCtx = document.getElementById('buildChart').getContext('2d');
+    const buildChart = new Chart(buildCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Success', 'Failed'],
+            datasets: [{
+                data: [80, 20],
+                backgroundColor: ['#1abc9c', '#e74c3c']
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    const vulnCtx = document.getElementById('vulnChart').getContext('2d');
+    const vulnChart = new Chart(vulnCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Critical', 'High', 'Medium', 'Low'],
+            datasets: [{
+                label: 'Vulnerabilities',
+                data: [2, 5, 10, 7],
+                backgroundColor: ['#e74c3c','#f39c12','#f1c40f','#3498db']
+            }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    const qualityCtx = document.getElementById('qualityChart').getContext('2d');
+    const qualityChart = new Chart(qualityCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Code Smells', 'Coverage', 'Bugs', 'Vulnerabilities', 'Duplications'],
+            datasets: [{
+                label: 'Quality Metrics',
+                data: [10, 80, 3, 2, 5],
+                backgroundColor: 'rgba(26, 188, 156, 0.2)',
+                borderColor: '#1abc9c',
+                borderWidth: 2
+            }]
+        },
+        options: { responsive: true, scales: { r: { beginAtZero: true } } }
+    });
+</script>
+
 </body>
 </html>
-
-
-
