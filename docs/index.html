@@ -53,33 +53,60 @@
 </main>
 
 <script>
-const buildChart = new Chart(document.getElementById('buildChart').getContext('2d'), {
-    type: 'doughnut',
-    data: {
-        labels: ['Success','Failed'],
-        datasets: [{ data:[80,20], backgroundColor:['#1abc9c','#e74c3c'] }]
-    },
-    options: { responsive:true }
-});
+fetch('dashboard/data.json')
+  .then(response => response.json())
+  .then(data => {
+      // Build Chart
+      new Chart(document.getElementById('buildChart').getContext('2d'), {
+          type: 'doughnut',
+          data: {
+              labels: ['Success', 'Failed'],
+              datasets: [{
+                  data: [data.build.success, data.build.failed],
+                  backgroundColor: ['#1abc9c','#e74c3c']
+              }]
+          },
+          options: { responsive: true }
+      });
 
-const vulnChart = new Chart(document.getElementById('vulnChart').getContext('2d'), {
-    type:'bar',
-    data:{
-        labels:['Critical','High','Medium','Low'],
-        datasets:[{label:'Vulnerabilities',data:[2,5,10,7], backgroundColor:['#e74c3c','#f39c12','#f1c40f','#3498db'] }]
-    },
-    options:{ responsive:true, scales:{ y:{ beginAtZero:true } } }
-});
+      // Snyk Chart
+      new Chart(document.getElementById('vulnChart').getContext('2d'), {
+          type:'bar',
+          data:{
+              labels:['Critical','High','Medium','Low'],
+              datasets:[{
+                  label:'Vulnerabilities',
+                  data:[data.snyk.critical, data.snyk.high, data.snyk.medium, data.snyk.low],
+                  backgroundColor:['#e74c3c','#f39c12','#f1c40f','#3498db']
+              }]
+          },
+          options:{ responsive:true, scales:{ y:{ beginAtZero:true } } }
+      });
 
-const qualityChart = new Chart(document.getElementById('qualityChart').getContext('2d'), {
-    type:'radar',
-    data:{
-        labels:['Code Smells','Coverage','Bugs','Vulnerabilities','Duplications'],
-        datasets:[{ label:'Quality Metrics', data:[10,80,3,2,5], backgroundColor:'rgba(26,188,156,0.2)', borderColor:'#1abc9c', borderWidth:2 }]
-    },
-    options:{ responsive:true, scales:{ r:{ beginAtZero:true } } }
-});
+      // SonarCloud Chart
+      new Chart(document.getElementById('qualityChart').getContext('2d'), {
+          type:'radar',
+          data:{
+              labels:['Code Smells','Coverage','Bugs','Vulnerabilities','Duplications'],
+              datasets:[{
+                  label:'Quality Metrics',
+                  data:[
+                      data.sonar.codeSmells,
+                      data.sonar.coverage,
+                      data.sonar.bugs,
+                      data.sonar.vulnerabilities,
+                      data.sonar.duplications
+                  ],
+                  backgroundColor:'rgba(26,188,156,0.2)',
+                  borderColor:'#1abc9c',
+                  borderWidth:2
+              }]
+          },
+          options:{ responsive:true, scales:{ r:{ beginAtZero:true } } }
+      });
+  })
+  .catch(err => console.error('Error loading JSON:', err));
 </script>
+
 </body>
 </html>
-
