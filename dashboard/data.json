@@ -1,5 +1,5 @@
 {
-  "build": {"success": 80, "failed": 20},
-  "snyk": {"critical": 2, "high": 5, "medium": 10, "low": 7},
-  "sonar": {"codeSmells": 10, "coverage": 80, "bugs": 3, "vulnerabilities": 2, "duplications": 5}
+  "build": {"success": 1, "failed": 0},
+  "snyk": {"critical": 0, "high": 0, "medium": 0, "low": 0},
+  "sonar": {"codeSmells": 0, "coverage": 0, "bugs": 0, "vulnerabilities": 0, "duplications": 0}
 }
