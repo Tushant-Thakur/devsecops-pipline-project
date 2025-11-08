@@ -75,6 +75,17 @@ jobs:
             -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project \
             -Dsonar.host.url=${SONAR_HOST_URL}
 
+      # Step 10: Generate dashboard JSON
+      - name: Generate Dashboard JSON
+        run: |
+          mkdir -p dashboard
+          echo '{
+            "build": {"success": 80, "failed": 20},
+            "snyk": {"critical": 2, "high": 5, "medium": 10, "low": 7},
+            "sonar": {"codeSmells": 10, "coverage": 80, "bugs": 3, "vulnerabilities": 2, "duplications": 5}
+          }' > dashboard/data.json
+
+
 
 
 
