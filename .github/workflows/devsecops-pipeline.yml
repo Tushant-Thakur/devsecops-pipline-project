@@ -75,19 +75,41 @@ jobs:
             -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project \
             -Dsonar.host.url=${SONAR_HOST_URL}
 
-      # Step 10: Generate dashboard JSON
-      - name: Generate Dashboard JSON
+      # Step 10: Generate dashboard JSON dynamically
+      - name: Generate dashboard JSON
         run: |
           mkdir -p dashboard
-          echo '{
-            "build": {"success": 80, "failed": 20},
-            "snyk": {"critical": 2, "high": 5, "medium": 10, "low": 7},
-            "sonar": {"codeSmells": 10, "coverage": 80, "bugs": 3, "vulnerabilities": 2, "duplications": 5}
-          }' > dashboard/data.json
 
+          # Build status
+          BUILD_SUCCESS=0
+          BUILD_FAILED=0
+          if [ "${{ job.status }}" == "success" ]; then
+            BUILD_SUCCESS=1
+          else
+            BUILD_FAILED=1
+          fi
 
+          # Static placeholders (later we’ll make these dynamic)
+          SNYK_CRITICAL=0
+          SNYK_HIGH=0
+          SNYK_MEDIUM=0
+          SNYK_LOW=0
 
-      # Step X: Commit dashboard JSON back to repo
+          SONAR_CODE_SMELLS=0
+          SONAR_COVERAGE=0
+          SONAR_BUGS=0
+          SONAR_VULNERABILITIES=0
+          SONAR_DUPLICATIONS=0
+
+          cat <<EOF > dashboard/data.json
+{
+  "build": {"success": $BUILD_SUCCESS, "failed": $BUILD_FAILED},
+  "snyk": {"critical": $SNYK_CRITICAL, "high": $SNYK_HIGH, "medium": $SNYK_MEDIUM, "low": $SNYK_LOW},
+  "sonar": {"codeSmells": $SONAR_CODE_SMELLS, "coverage": $SONAR_COVERAGE, "bugs": $SONAR_BUGS, "vulnerabilities": $SONAR_VULNERABILITIES, "duplications": $SONAR_DUPLICATIONS}
+}
+EOF
+
+      # Step 11: Commit dashboard JSON back to repo
       - name: Commit dashboard JSON
         run: |
           git config user.name "github-actions"
@@ -95,15 +117,6 @@ jobs:
           git add dashboard/data.json
           git commit -m "Update dashboard JSON" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
-
-
-
-
-
-
-
-
-
 
 
 
