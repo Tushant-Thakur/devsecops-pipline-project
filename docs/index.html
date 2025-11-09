@@ -69,19 +69,61 @@ fetch('data.json')
       options: { responsive: true }
     });
 
-    // Snyk chart
-    new Chart(document.getElementById('vulnChart').getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: ['Critical','High','Medium','Low'],
-        datasets: [{
-          label: 'Vulnerabilities',
-          data: [data.snyk.critical, data.snyk.high, data.snyk.medium, data.snyk.low],
-          backgroundColor: ['#e74c3c','#f39c12','#f1c40f','#3498db']
-        }]
+   // Snyk chart
+const snykValues = [
+  data.snyk.critical,
+  data.snyk.high,
+  data.snyk.medium,
+  data.snyk.low
+];
+
+const snykLabels = ['Critical', 'High', 'Medium', 'Low'];
+const snykColors = ['#e74c3c','#f39c12','#f1c40f','#3498db'];
+
+new Chart(document.getElementById('vulnChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: snykLabels,
+    datasets: [{
+      label: 'Vulnerabilities',
+      data: snykValues,
+      backgroundColor: snykColors
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          precision: 0 // show integers only
+        },
+        title: {
+          display: true,
+          text: 'Count'
+        }
+      }
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: snykValues.every(v => v === 0)
+          ? '✅ All dependencies are secure'
+          : '⚠️ Vulnerabilities detected'
       },
-      options: { responsive: true, scales: { y: { beginAtZero: true } } }
-    });
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const value = context.parsed.y;
+            return value === 0 ? 'No issues' : value + ' vulnerabilities';
+          }
+        }
+      }
+    }
+  }
+});
+
 
     // Sonar chart
     new Chart(document.getElementById('qualityChart').getContext('2d'), {
