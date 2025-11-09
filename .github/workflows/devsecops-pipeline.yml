@@ -56,7 +56,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      # Step 8: Build & SonarCloud in one step, capture exit code
+      # Step 8: Build & SonarCloud in one step
       - name: Build and analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -101,15 +101,15 @@ jobs:
           # Timestamp
           TIMESTAMP=$(date +'%Y-%m-%d %H:%M:%S')
 
-          # Generate JSON
+          # Generate JSON (no indentation on EOF)
           cat <<EOF > docs/data.json
-{
-  "build": {"success": $BUILD_SUCCESS, "failed": $BUILD_FAILED},
-  "snyk": {"critical": $SNYK_CRITICAL, "high": $SNYK_HIGH, "medium": $SNYK_MEDIUM, "low": $SNYK_LOW},
-  "sonar": {"codeSmells": $SONAR_CODE_SMELLS, "coverage": $SONAR_COVERAGE, "bugs": $SONAR_BUGS, "vulnerabilities": $SONAR_VULNERABILITIES, "duplications": $SONAR_DUPLICATIONS},
-  "updated_at": "$TIMESTAMP"
-}
-EOF
+          {
+            "build": {"success": $BUILD_SUCCESS, "failed": $BUILD_FAILED},
+            "snyk": {"critical": $SNYK_CRITICAL, "high": $SNYK_HIGH, "medium": $SNYK_MEDIUM, "low": $SNYK_LOW},
+            "sonar": {"codeSmells": $SONAR_CODE_SMELLS, "coverage": $SONAR_COVERAGE, "bugs": $SONAR_BUGS, "vulnerabilities": $SONAR_VULNERABILITIES, "duplications": $SONAR_DUPLICATIONS},
+            "updated_at": "$TIMESTAMP"
+          }
+          EOF
 
       # Step 10: Commit dashboard JSON back to repo
       - name: Commit dashboard JSON
@@ -119,5 +119,3 @@ EOF
           git add docs/data.json
           git commit -m "Update dashboard JSON" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
-
-
