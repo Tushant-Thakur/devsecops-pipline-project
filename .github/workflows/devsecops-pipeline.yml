@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required for better Sonar analysis
+          fetch-depth: 0
 
       # Step 2: Set up JDK 22
       - name: Set up JDK 22
@@ -50,66 +50,68 @@ jobs:
       - name: Set up Snyk CLI
         uses: snyk/actions/setup@master
 
-      # Step 7: Monitor project in Snyk (optional)
-      - name: Monitor project in Snyk
-        run: snyk monitor --severity-threshold=high
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
-
-      # Step 8: Run Snyk test
+      # Step 7: Run Snyk test
       - name: Run Snyk to check for vulnerabilities
-        run: snyk test --severity-threshold=high
+        run: snyk test --severity-threshold=high --json > snyk-report.json || true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
 
-      # Step 9: Build and analyze with SonarCloud
+      # Step 8: Build & SonarCloud in one step, capture exit code
       - name: Build and analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
+          set -o pipefail
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.2.0.4988:sonar \
             -Dsonar.organization=devsecops-team \
             -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project \
-            -Dsonar.host.url=${SONAR_HOST_URL}
+            -Dsonar.host.url=${SONAR_HOST_URL} | tee build.log
+          BUILD_EXIT_CODE=${PIPESTATUS[0]}
+          echo "BUILD_EXIT_CODE=$BUILD_EXIT_CODE" >> $GITHUB_ENV
 
-      # Step 10: Generate dashboard JSON dynamically
+      # Step 9: Generate dashboard JSON dynamically
       - name: Generate dashboard JSON
         run: |
           mkdir -p docs
 
           # Build status
-          BUILD_SUCCESS=0
-          BUILD_FAILED=0
-          if [ "${{ job.status }}" == "success" ]; then
+          if [ "$BUILD_EXIT_CODE" -eq 0 ]; then
             BUILD_SUCCESS=1
+            BUILD_FAILED=0
           else
+            BUILD_SUCCESS=0
             BUILD_FAILED=1
           fi
 
-          # Static placeholders (for now)
-          SNYK_CRITICAL=0
-          SNYK_HIGH=0
-          SNYK_MEDIUM=0
-          SNYK_LOW=0
+          # Snyk metrics
+          SNYK_CRITICAL=$(jq '.vulnerabilities | map(select(.severity=="critical")) | length' snyk-report.json 2>/dev/null || echo 0)
+          SNYK_HIGH=$(jq '.vulnerabilities | map(select(.severity=="high")) | length' snyk-report.json 2>/dev/null || echo 0)
+          SNYK_MEDIUM=$(jq '.vulnerabilities | map(select(.severity=="medium")) | length' snyk-report.json 2>/dev/null || echo 0)
+          SNYK_LOW=$(jq '.vulnerabilities | map(select(.severity=="low")) | length' snyk-report.json 2>/dev/null || echo 0)
 
-          SONAR_CODE_SMELLS=0
-          SONAR_COVERAGE=0
-          SONAR_BUGS=0
-          SONAR_VULNERABILITIES=0
-          SONAR_DUPLICATIONS=0
+          # SonarCloud metrics
+          SONAR_JSON=$(curl -s -u ${SONAR_TOKEN}: "https://sonarcloud.io/api/measures/component?component=Tushant-Thakur_devsecops-pipline-project&metricKeys=bugs,vulnerabilities,code_smells,coverage,duplicated_lines_density")
+          SONAR_BUGS=$(echo $SONAR_JSON | jq '.component.measures[] | select(.metric=="bugs") | .value // 0')
+          SONAR_VULNERABILITIES=$(echo $SONAR_JSON | jq '.component.measures[] | select(.metric=="vulnerabilities") | .value // 0')
+          SONAR_CODE_SMELLS=$(echo $SONAR_JSON | jq '.component.measures[] | select(.metric=="code_smells") | .value // 0')
+          SONAR_COVERAGE=$(echo $SONAR_JSON | jq '.component.measures[] | select(.metric=="coverage") | .value // 0')
+          SONAR_DUPLICATIONS=$(echo $SONAR_JSON | jq '.component.measures[] | select(.metric=="duplicated_lines_density") | .value // 0')
 
+          # Timestamp
+          TIMESTAMP=$(date +'%Y-%m-%d %H:%M:%S')
+
+          # Generate JSON
           cat <<EOF > docs/data.json
-          {
-            "build": {"success": $BUILD_SUCCESS, "failed": $BUILD_FAILED},
-            "snyk": {"critical": $SNYK_CRITICAL, "high": $SNYK_HIGH, "medium": $SNYK_MEDIUM, "low": $SNYK_LOW},
-            "sonar": {"codeSmells": $SONAR_CODE_SMELLS, "coverage": $SONAR_COVERAGE, "bugs": $SONAR_BUGS, "vulnerabilities": $SONAR_VULNERABILITIES, "duplications": $SONAR_DUPLICATIONS}
-          }
-          EOF
+{
+  "build": {"success": $BUILD_SUCCESS, "failed": $BUILD_FAILED},
+  "snyk": {"critical": $SNYK_CRITICAL, "high": $SNYK_HIGH, "medium": $SNYK_MEDIUM, "low": $SNYK_LOW},
+  "sonar": {"codeSmells": $SONAR_CODE_SMELLS, "coverage": $SONAR_COVERAGE, "bugs": $SONAR_BUGS, "vulnerabilities": $SONAR_VULNERABILITIES, "duplications": $SONAR_DUPLICATIONS},
+  "updated_at": "$TIMESTAMP"
+}
+EOF
 
-      # Step 11: Commit dashboard JSON back to repo
+      # Step 10: Commit dashboard JSON back to repo
       - name: Commit dashboard JSON
         run: |
           git config user.name "github-actions"
@@ -117,6 +119,5 @@ jobs:
           git add docs/data.json
           git commit -m "Update dashboard JSON" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
-
 
 
