@@ -148,6 +148,19 @@ new Chart(document.getElementById('vulnChart').getContext('2d'), {
     });
   })
   .catch(err => console.error('Failed to load JSON:', err));
+
+
+  // Auto-refresh every 60 seconds
+setInterval(() => {
+    fetch('data.json')
+      .then(res => res.json())
+      .then(data => {
+          // destroy old charts and re-render (or just update data)
+          location.reload(); // simplest method
+      })
+      .catch(err => console.error('Failed to reload JSON:', err));
+}, 60000);
+
 </script>
 
 
