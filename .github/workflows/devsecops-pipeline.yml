@@ -71,10 +71,11 @@ jobs:
           echo "BUILD_EXIT_CODE=$BUILD_EXIT_CODE" >> $GITHUB_ENV
 
       # Step 9: Generate dashboard JSON dynamically
+# Step: Generate dashboard JSON dynamically
       - name: Generate dashboard JSON
         run: |
           mkdir -p docs
-
+      
           # Build status
           if [ "$BUILD_EXIT_CODE" -eq 0 ]; then
             BUILD_SUCCESS=1
@@ -83,13 +84,13 @@ jobs:
             BUILD_SUCCESS=0
             BUILD_FAILED=1
           fi
-
+      
           # Snyk metrics
           SNYK_CRITICAL=$(jq '.vulnerabilities | map(select(.severity=="critical")) | length' snyk-report.json 2>/dev/null || echo 0)
           SNYK_HIGH=$(jq '.vulnerabilities | map(select(.severity=="high")) | length' snyk-report.json 2>/dev/null || echo 0)
           SNYK_MEDIUM=$(jq '.vulnerabilities | map(select(.severity=="medium")) | length' snyk-report.json 2>/dev/null || echo 0)
           SNYK_LOW=$(jq '.vulnerabilities | map(select(.severity=="low")) | length' snyk-report.json 2>/dev/null || echo 0)
-
+      
           # SonarCloud metrics
           SONAR_JSON=$(curl -s -u ${SONAR_TOKEN}: "https://sonarcloud.io/api/measures/component?component=Tushant-Thakur_devsecops-pipline-project&metricKeys=bugs,vulnerabilities,code_smells,coverage,duplicated_lines_density")
           SONAR_BUGS=$(echo $SONAR_JSON | jq '.component.measures[] | select(.metric=="bugs") | .value // 0')
@@ -97,19 +98,33 @@ jobs:
           SONAR_CODE_SMELLS=$(echo $SONAR_JSON | jq '.component.measures[] | select(.metric=="code_smells") | .value // 0')
           SONAR_COVERAGE=$(echo $SONAR_JSON | jq '.component.measures[] | select(.metric=="coverage") | .value // 0')
           SONAR_DUPLICATIONS=$(echo $SONAR_JSON | jq '.component.measures[] | select(.metric=="duplicated_lines_density") | .value // 0')
-
+      
+          # Ensure defaults (no empty values)
+          SONAR_CODE_SMELLS=${SONAR_CODE_SMELLS:-0}
+          SONAR_COVERAGE=${SONAR_COVERAGE:-0}
+          SONAR_BUGS=${SONAR_BUGS:-0}
+          SONAR_VULNERABILITIES=${SONAR_VULNERABILITIES:-0}
+          SONAR_DUPLICATIONS=${SONAR_DUPLICATIONS:-0}
+      
           # Timestamp
           TIMESTAMP=$(date +'%Y-%m-%d %H:%M:%S')
-
-          # Generate JSON (no indentation on EOF)
+      
+          # Generate valid JSON
           cat <<EOF > docs/data.json
           {
             "build": {"success": $BUILD_SUCCESS, "failed": $BUILD_FAILED},
             "snyk": {"critical": $SNYK_CRITICAL, "high": $SNYK_HIGH, "medium": $SNYK_MEDIUM, "low": $SNYK_LOW},
-            "sonar": {"codeSmells": $SONAR_CODE_SMELLS, "coverage": $SONAR_COVERAGE, "bugs": $SONAR_BUGS, "vulnerabilities": $SONAR_VULNERABILITIES, "duplications": $SONAR_DUPLICATIONS},
+            "sonar": {
+              "codeSmells": $SONAR_CODE_SMELLS,
+              "coverage": $SONAR_COVERAGE,
+              "bugs": $SONAR_BUGS,
+              "vulnerabilities": $SONAR_VULNERABILITIES,
+              "duplications": $SONAR_DUPLICATIONS
+            },
             "updated_at": "$TIMESTAMP"
           }
           EOF
+
 
       # Step 10: Commit dashboard JSON back to repo
       - name: Commit dashboard JSON
@@ -119,3 +134,4 @@ jobs:
           git add docs/data.json
           git commit -m "Update dashboard JSON" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+
