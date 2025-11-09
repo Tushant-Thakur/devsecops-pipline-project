@@ -78,7 +78,7 @@ jobs:
       # Step 10: Generate dashboard JSON dynamically
       - name: Generate dashboard JSON
         run: |
-          mkdir -p dashboard
+          mkdir -p docs
 
           # Build status
           BUILD_SUCCESS=0
@@ -89,7 +89,7 @@ jobs:
             BUILD_FAILED=1
           fi
 
-          # Static placeholders (later we’ll make these dynamic)
+          # Static placeholders (for now)
           SNYK_CRITICAL=0
           SNYK_HIGH=0
           SNYK_MEDIUM=0
@@ -101,7 +101,7 @@ jobs:
           SONAR_VULNERABILITIES=0
           SONAR_DUPLICATIONS=0
 
-          cat <<EOF > dashboard/data.json
+          cat <<EOF > docs/data.json
           {
             "build": {"success": $BUILD_SUCCESS, "failed": $BUILD_FAILED},
             "snyk": {"critical": $SNYK_CRITICAL, "high": $SNYK_HIGH, "medium": $SNYK_MEDIUM, "low": $SNYK_LOW},
@@ -114,7 +114,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add dashboard/data.json
+          git add docs/data.json
           git commit -m "Update dashboard JSON" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
 
