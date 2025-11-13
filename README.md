@@ -76,9 +76,7 @@ Copy code
 ## 📈 How to Use / Test Locally
 1. Clone the repository:  
 ```bash
-git clone https://github.com/Tushant-Thakur/devsecops-pipline-project.git
-cd devsecops-pipline-project
-Open docs/index.html in a browser or use Live Server in VS Code.
+
 
 Make a change and push to main → workflow updates metrics → dashboard updates automatically.
 
