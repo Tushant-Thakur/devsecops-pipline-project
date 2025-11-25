@@ -39,7 +39,7 @@ devsecops-pipline-project/
 yaml
 Copy code
 
----
+
 
 ## 🛠 Pipeline Workflow
 1. Checkout repository  
