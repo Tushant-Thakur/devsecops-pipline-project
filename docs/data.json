@@ -1,6 +1,6 @@
 {
   "build": {"success": 1, "failed": 0},
-  "snyk": {"critical": 0, "high": 0, "medium": 0, "low": 0},
+  "snyk": {"critical": 2, "high": 2, "medium": 0, "low": 0},
   "sonar": {
     "codeSmells": 0,
     "coverage": 0,
@@ -8,5 +8,5 @@
     "vulnerabilities": 0,
     "duplications": 0
   },
-  "updated_at": "2025-11-25 13:09:51"
+  "updated_at": "2025-11-25 16:05:24"
 }
