@@ -37,7 +37,7 @@ devsecops-pipline-project/
 └── data.json # JSON metrics file updated by workflow
 
 yaml
-Copy code
+
 
 
 
