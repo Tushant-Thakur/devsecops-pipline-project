@@ -1,5 +1,5 @@
 {
-  "build": {"success": 1, "failed": 0},
+  "build": {"success": 0, "failed": 1},
   "snyk": {"critical": 0, "high": 0, "medium": 0, "low": 0},
   "sonar": {
     "codeSmells": 0,
