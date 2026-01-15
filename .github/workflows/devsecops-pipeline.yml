@@ -52,9 +52,10 @@ jobs:
 
       # Step 7: Run Snyk test
       - name: Run Snyk to check for vulnerabilities
-        run: snyk test --severity-threshold=high --json > snyk-report.json || true
+        run: snyk test --severity-threshold=high --json > snyk-report.json
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
 
       # Step 8: Build & SonarCloud in one step
       - name: Build and analyze with SonarCloud
@@ -134,4 +135,5 @@ jobs:
           git add docs/data.json
           git commit -m "Update dashboard JSON" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+
 
