@@ -6,7 +6,7 @@ public class Calculator {
     }
 
     public int subtract(int a, int b) {
-        int unused=10;
+       
         return a - b;
     }
 
