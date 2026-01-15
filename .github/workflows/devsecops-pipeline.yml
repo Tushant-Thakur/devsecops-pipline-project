@@ -67,7 +67,9 @@ jobs:
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.2.0.4988:sonar \
             -Dsonar.organization=devsecops-team \
             -Dsonar.projectKey=Tushant-Thakur_devsecops-pipline-project \
-            -Dsonar.host.url=${SONAR_HOST_URL} | tee build.log
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.qualitygate.wait=true | tee build.log
+
           BUILD_EXIT_CODE=${PIPESTATUS[0]}
           echo "BUILD_EXIT_CODE=$BUILD_EXIT_CODE" >> $GITHUB_ENV
 
@@ -135,5 +137,6 @@ jobs:
           git add docs/data.json
           git commit -m "Update dashboard JSON" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+
 
 
