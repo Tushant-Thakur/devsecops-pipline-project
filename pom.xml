@@ -56,7 +56,7 @@
                     <target>22</target>
                 </configuration>
             </plugin>
-
+                 
             <!-- ✅ Surefire Plugin for JUnit 5 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -73,6 +73,26 @@
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>5.2.0.4988</version>
             </plugin>
+                  <plugin>
+                      <groupId>org.jacoco</groupId>
+                      <artifactId>jacoco-maven-plugin</artifactId>
+                      <version>0.8.11</version>
+                      <executions>
+                          <execution>
+                              <goals>
+                                  <goal>prepare-agent</goal>
+                              </goals>
+                          </execution>
+                          <execution>
+                              <id>report</id>
+                              <phase>test</phase>
+                              <goals>
+                                  <goal>report</goal>
+                              </goals>
+                          </execution>
+                      </executions>
+                  </plugin>
+
          
         </plugins>
     </build>
