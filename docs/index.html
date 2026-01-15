@@ -57,17 +57,23 @@ fetch('data.json')
   .then(response => response.json())
   .then(data => {
     // Build chart
-    new Chart(document.getElementById('buildChart').getContext('2d'), {
-      type: 'doughnut',
-      data: {
+// Build chart with dynamic colors
+const buildColors = data.build.failed > 0
+    ? ['#e74c3c','#c0392b']   // red tones if there are failures
+    : ['#1abc9c','#e74c3c'];  // green if all success
+
+new Chart(document.getElementById('buildChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
         labels: ['Success','Failed'],
         datasets: [{
-          data: [data.build.success, data.build.failed],
-          backgroundColor: ['#1abc9c','#e74c3c']
+            data: [data.build.success, data.build.failed],
+            backgroundColor: buildColors
         }]
-      },
-      options: { responsive: true }
-    });
+    },
+    options: { responsive: true }
+ });
+
 
    // Snyk chart
 const snykValues = [
