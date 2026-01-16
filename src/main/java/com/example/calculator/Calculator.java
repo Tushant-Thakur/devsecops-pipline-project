@@ -14,9 +14,11 @@ public class Calculator {
         return a * b;
     }
     
-    public int divide(int a, int b) {
-    return a / b; // ❌ BUG: possible division by zero
+    public int crash() {
+        String s = null;
+        return s.length();
     }
+
 
 
     public int divide(int a, int b) {
