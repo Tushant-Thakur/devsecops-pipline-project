@@ -14,10 +14,10 @@ public class Calculator {
         return a * b;
     }
     
-   public int crash() {
+  /* public int crash() {
         String s = null;
         return s.length();
-    }
+    }*/
 
 
 
