@@ -1,22 +1,21 @@
-# 🚀 DevSecOps Pipeline Project
+#  DevSecOps Pipeline Project
 
 This repository demonstrates a **fully automated DevSecOps pipeline** for a Java Maven project using **GitHub Actions**, **SonarCloud**, and **Snyk** for continuous integration, code quality checks, and vulnerability scanning.  
 It also includes an **interactive dashboard** hosted on GitHub Pages to visualize build, vulnerability, and code quality metrics in real-time.
 
----
 
-## 🔍 Features
-- ✅ **Automated CI/CD** with GitHub Actions  
-- 🔒 **Static Code Analysis** via **SonarCloud**  
-- 🛡 **Dependency & License Scanning** via **Snyk**  
-- ⚡ **Maven Build Automation**  
-- ☕ Supports **Java 22 (Temurin distribution)**  
-- 📊 **Interactive Dashboard** with Chart.js  
-- ⏱ Automatic update of metrics (`data.json`) on every push  
+##  Features
+-  **Automated CI/CD** with GitHub Actions  
+-  **Static Code Analysis** via **SonarCloud**  
+-  **Dependency & License Scanning** via **Snyk**  
+-  **Maven Build Automation**  
+-  Supports **Java 22 (Temurin distribution)**  
+-  **Interactive Dashboard** with Chart.js  
+-  Automatic update of metrics (`data.json`) on every push  
 
----
 
-## ⚙️ Tools & Technologies
+
+##  Tools & Technologies
 - **GitHub Actions** → Workflow automation  
 - **SonarCloud** → Code quality & security scanning  
 - **Snyk** → Vulnerability & license scanning  
@@ -25,9 +24,9 @@ It also includes an **interactive dashboard** hosted on GitHub Pages to visualiz
 - **Chart.js** → Interactive charts for the dashboard  
 - **GitHub Pages** → Host the live dashboard  
 
----
 
-## 📁 Folder Structure
+
+##  Folder Structure
 devsecops-pipline-project/
 ├── .github/
 │ └── workflows/
@@ -41,7 +40,7 @@ yaml
 
 
 
-## 🛠 Pipeline Workflow
+##  Pipeline Workflow
 1. Checkout repository  
 2. Setup Java JDK 22  
 3. Cache Maven and SonarCloud dependencies  
@@ -52,9 +51,9 @@ yaml
 8. Commit updated `data.json` back to the repo  
 9. GitHub Pages automatically updates the dashboard  
 
----
 
-## 📊 Dashboard
+
+##  Dashboard
 - **Live Charts** using Chart.js:
   - Doughnut chart for Build & Test status  
   - Bar chart for Snyk vulnerabilities  
@@ -66,14 +65,14 @@ yaml
 
 ---
 
-## ✅ Badges
+##  Badges
 - ![Build Status](https://github.com/Tushant-Thakur/devsecops-pipline-project/actions/workflows/devsecops-pipeline.yml/badge.svg?branch=main)  
 - ![Snyk Status](https://snyk.io/test/github/Tushant-Thakur/devsecops-pipline-project/badge.svg)  
 - ![SonarCloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=Tushant-Thakur_devsecops-pipline-project&metric=alert_status)  
 
 ---
 
-## 📈 How to Use / Test Locally
+##  How to Use / Test Locally
 1. Clone the repository:  
 ```bash
 
